@@ -49,7 +49,7 @@ const posts = {
                 });
             }
 
-            if (post.userId.toString() !== req.user._id.toString()) {
+            if (post.userId !== req.user._id) {
                 return res.json({
                     success: false,
                     message: 'Không có quyền cập nhật bài post này'

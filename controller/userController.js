@@ -6,7 +6,7 @@ const createApiKey = ({ id, email }) => {
     const randomString = crypto.randomBytes(16).toString('hex');
     return `mern-${id}-${email}-${randomString}`
 }
-const apiKeyCache = {}
+export const apiKeyCache = {}
 
 const users = {
     register: async (req, res) => {
@@ -53,21 +53,21 @@ const users = {
                     message: 'User khong ton tai'
                 })
             }
-            if (hashPasswordLogin) {
-                const apiKey = createApiKey({ id: user._id, email: user.email })
-                apiKeyCache[apiKey] = { userId: user._id, email: user.email }
-                console.log("apiKeyCache:", apiKeyCache);
-                res.json({
-                    success: true,
-                    message: "Dang nhap thanh cong",
-                    apiKey
-                })
-            } else {
-                res.json({
+            if (!hashPasswordLogin) {
+                return res.json({
                     success: false,
-                    message: "Mat khau sai"
+                    message: "Mat khau sai",
                 })
             }
+            const apiKey = createApiKey({ id: user._id, email: user.email })
+            apiKeyCache[apiKey] = { userId: user._id, email: user.email }
+            console.log("apiKeyCache:", apiKeyCache);
+
+            res.json({
+                message: "Dang nhap thanh cong",
+                success: true,
+                apiKey
+            })
 
         } catch (error) {
             res.json({
@@ -77,8 +77,5 @@ const users = {
         }
     }
 }
-
-
-
 
 export default users
